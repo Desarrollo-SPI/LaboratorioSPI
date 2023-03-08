@@ -5,7 +5,7 @@ class Server {
     constructor(){
         this.app = express();
         this.port = process.env.PORT;
-        this.userRoutesPath = '/laboratorioSPI/usuarios/';
+        this.userRoutesPath = '/api/laboratorioSPI';
 
         //Midelwares 
         this.middelwares();
@@ -28,7 +28,7 @@ class Server {
 
     routes(){
         
-        this.app.use(this.userRoutesPath, require('../routes/userRegister'));
+        this.app.use(this.userRoutesPath, require('../routes/LaboratorioSPI'));
     }
 
     listen(){
