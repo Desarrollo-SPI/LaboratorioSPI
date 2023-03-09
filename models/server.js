@@ -1,12 +1,13 @@
 const express = require('express');
-const cors = require('cors')
+const cors = require('cors');
+const db = require('../db/conection');
 
 class Server {
     constructor(){
         this.app = express();
         this.port = process.env.PORT;
         this.userRoutesPath = '/api/laboratorioSPI';
-
+        this.dbConnection();
         //Midelwares 
         this.middelwares();
 
@@ -14,12 +15,21 @@ class Server {
         this.routes();
     }
 
+    async dbConnection(){
+        try {
+            await db.authenticate();
+            console.log('Database online');
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
     middelwares(){
 
         //cors
         this.app.use(cors())
 
-        //lectura y parseo dek body
+        //lectura y parseo del body
         this.app.use(express.json());
 
         //directorio publico
@@ -28,12 +38,12 @@ class Server {
 
     routes(){
         
-        this.app.use(this.userRoutesPath, require('../routes/LaboratorioSPI'));
+        this.app.use(this.userRoutesPath, require('../routes/laboratorioSPI'));
     }
 
     listen(){
         this.app.listen(this.port, () => {
-            console.log('Todo bien',this.port)
+            console.log('Aplicacion corriendo en el puerto:',this.port)
         })
     }
 }
