@@ -24,7 +24,10 @@ router.post('/registro',[
 
 router.post('/login', usersLogin)
 
-router.post('/updateCorreo', updateCorreo)
+router.post('/updateCorreo',[
+  check('email','El correo es obligatorio').not().isEmpty(),
+  check('email','Porfavor ingresa un correo valido').isEmail(),
+],updateCorreo)
 
 router.post('/insertImg', insertImg)
 
