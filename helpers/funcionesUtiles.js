@@ -34,15 +34,8 @@ const usuarioExiste = async (user_name = '') => {
   }
 }
 
-const idValido = async(id_user = '') => {
-  const usuario = await Usuario.findByPk(id_user);
-    if(!usuario){
-      throw new Error(`No existe ningun usuario  con el id ${id_user}`)      
-    }
-}
 
 module.exports = {
   emailExiste,
   usuarioExiste,
-  idValido
 }

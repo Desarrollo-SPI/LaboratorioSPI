@@ -1,14 +1,13 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
-const { validaciones } = require('../middlewares/validar-campos');
-const { emailExiste, usuarioExiste, idValido } = require('../helpers/funcionesUtiles');
+const {validaciones,validarJWT} = require('../middlewares')
+const { emailExiste, usuarioExiste, } = require('../helpers/funcionesUtiles');
 const {
   usersRegister,
   usersGet,
   usersLogin,
   updateCorreo,
 } = require('../controllers/userController');
-
 const { insertImg, getImg,} = require('../controllers/imgControllers');
 
 
@@ -34,7 +33,7 @@ router.post('/registro',[
 ],usersRegister)
 
 router.post('/updateCorreo',[
-  check('id_user').custom(idValido),
+  validarJWT,
   check('email','Porfavor ingresa un correo valido').isEmail(),
   check('email').custom(emailExiste),
   validaciones

@@ -6,7 +6,7 @@ const  validaciones = (req,res,next) =>{
   //valida los midelwares 
   const errores = validationResult(req);
   
-  console.log('Errrs',errores)
+  console.log('***Errores',errores)
   if(!errores.isEmpty()){
     return res.status(400).send({
       replyCode: 400,
@@ -14,7 +14,7 @@ const  validaciones = (req,res,next) =>{
       errores      
     },)    
   }
-
+  
   next();
 }
 

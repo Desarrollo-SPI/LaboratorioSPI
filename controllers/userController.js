@@ -1,16 +1,19 @@
 const { response, request } = require('express');
 const { Usuario } = require('../models/usuario');
+const { generarJWT } = require('../helpers/generarJWT');
 const bcryptjs = require('bcryptjs');
 
 
 
-/****************** Acciones para el usuario ******************/
+/****************** Trae todos los usuarios ******************/
 
 const usersGet = async (req, res = response) => {
   const usuarios = await Usuario.findAll();
   res.status(200).send({ data: usuarios });
 }
 
+
+/****************** Login del usuario ******************/
 
 const usersLogin = async(req, res = response) => {
   const {user_name,password} = req.body;
@@ -42,14 +45,15 @@ const usersLogin = async(req, res = response) => {
     }
 
     //Generamos el JWT
-    const token = await (usuario.id_user)
+    const token = await generarJWT(usuario.id_user)
+    
 
     res.status(200).send({
       replyCode: 200,
       replyText: 'Usuario logeado',
       data: {
         user_name,
-        password
+        token
       }
     })    
   } catch (error) {
@@ -60,6 +64,10 @@ const usersLogin = async(req, res = response) => {
     })
   }  
 }
+
+
+
+/****************** Registro de usuarios ******************/
 
 const usersRegister = async(req, res = response) => {
 
@@ -96,13 +104,33 @@ const usersRegister = async(req, res = response) => {
 
 }
 
+
+/****************** Actualiza el correo ******************/
+
 const updateCorreo = async(req, res = response) => {
   const {id_user,email} = req.body;
+  const id = req.id_user
   try {         
+    const usuario = await Usuario.findByPk(id_user);
+    if(!usuario){      
+      return res.status(400).send({
+        replayCode: 400,
+        replyText: `No existe ningun usuario  con el id ${id_user}`
+      })
+    }
+
+    if(id != 13){
+      return res.status(400).send({
+        replayCode: 400,
+        replyText: 'Esta accion solo puede realizarla el Administrador (Desarrollo)'
+      })
+    }
+
     await usuario.update({where: {id_user:id_user}, email:email});
     res.status(200).send({
       replyCode: 200,
       replyText: "Se actualizo el correo correctamente",
+      msg: `El usuario que realizo la accion tiene el id: ${id}`
     });
 
   } catch (error) {
