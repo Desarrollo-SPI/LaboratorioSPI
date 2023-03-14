@@ -40,23 +40,23 @@ const insertImg = (req, res = response) => {
     replyText: 'Archivo cargado exitosamente, con extension: ' + extension
   })
 
-  // const uploadPath = path.join(__dirname,'../uploads/',archivo.name);
+  const uploadPath = path.join('/var/www/html/api/laboratorioSPI/img/',archivo.name);
 
-  // archivo.mv(uploadPath, (err)=> {
-  //   if (err) {
-  //     return res.status(500).send({
-  //       replyCode: 500,
-  //       replyText: 'Error desconocido, contacte con la secretaria de planeacion e informatica',
-  //       err
-  //     });
-  //   }
-  //   return res.status(200).send({
-  //     replyCode: 200,
-  //     replyText: 'Archivo cargado exitosamente a la ruta ' + uploadPath
-  //   })
-  // });
+  archivo.mv(uploadPath, (err)=> {
+    if (err) {
+      return res.status(500).send({
+        replyCode: 500,
+        replyText: 'Error desconocido, contacte con la secretaria de planeacion e informatica',
+        err
+      });
+    }
+    return res.status(200).send({
+      replyCode: 200,
+      replyText: 'Archivo cargado exitosamente a la ruta ' + uploadPath
+    })
+  });
 
-  // console.log(req.files);
+  console.log(req.files);
 
   
 }
