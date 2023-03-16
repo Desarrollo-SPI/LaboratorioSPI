@@ -1,6 +1,7 @@
 
-const path = require('path')
-const { response, request } = require('express')
+const { response, request } = require('express');
+const { cargarArchivos } = require('../helpers');
+const {Archivo} = require('../models/archivo');
 
 /****************** Acciones para las imagenes ******************/
 
@@ -11,7 +12,7 @@ const getImg = (req, res = response) => {
   })
 }
 
-const insertImg = (req, res = response) => {
+const insertImg = async(req, res = response) => {
 
   if (!req.files || Object.keys(req.files).length === 0 || !req.files.archivo) {
     res.status(400).send({
@@ -21,42 +22,31 @@ const insertImg = (req, res = response) => {
     return;
   }
 
-  const {archivo} = req.files;
-  const nombreCortado = archivo.name.split('.');
-  const extension = nombreCortado[nombreCortado.length-1];
+  try {
+    const pathArchivo = await cargarArchivos(req.files,/* ['tipos'],'sub-carpeta' */);
 
-  //Validar la extension
-  const extensionesValidas = ['png','jpg','jpeg'];
-
-  if(!extensionesValidas.includes(extension)){
-    res.status(400).send({
-      replyCode: 400,
-      replyText: `El tipo de archivo ${extension} no es valido, solo se aceptan: ${extensionesValidas}`
-    });
-  }
-
-  res.status(200).send({
-    replyCode: 200,
-    replyText: 'Archivo cargado exitosamente, con extension: ' + extension
-  })
-
-  const uploadPath = path.join('/var/www/html/api/laboratorioSPI/img/',archivo.name);
-
-  archivo.mv(uploadPath, (err)=> {
-    if (err) {
-      return res.status(500).send({
-        replyCode: 500,
-        replyText: 'Error desconocido, contacte con la secretaria de planeacion e informatica',
-        err
-      });
-    }
-    return res.status(200).send({
+    //Armamos la ruta a cargar en la BD
+    const rutaCortada = pathArchivo.split('/');
+    const fileName = rutaCortada[rutaCortada.length - 1];
+    const fileUrl = '/' + rutaCortada[rutaCortada.length - 2] + '/' + rutaCortada[rutaCortada.length - 1];
+    
+    //Creamos la instancia de Archivo y la guardamos en la Base de datos,
+    const archivo = new Archivo({fileName,fileUrl})
+    await archivo.save();
+    res.status(200).send({
       replyCode: 200,
-      replyText: 'Archivo cargado exitosamente a la ruta ' + uploadPath
-    })
-  });
+      replyText: 'Se cargó correctamente el archivo en la ruta: ', pathArchivo
+    }) 
 
   console.log(req.files);
+  } catch (error) {
+    res.status(400).send({
+      replyCode: 400,
+      replyText: 'No se ha podido cargar correctamente el archivo: ',error
+    }) 
+  }
+
+  
 
   
 }

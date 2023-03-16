@@ -39,7 +39,9 @@ router.post('/updateCorreo',[
   validaciones
 ],updateCorreo)
 
-router.post('/insertImg', insertImg)
+router.post('/insertImg',[
+  check('','La contraseña es obligatoria').not().isEmpty(),
+], insertImg)
 
 router.get('/getImg', getImg)
 

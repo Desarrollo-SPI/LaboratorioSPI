@@ -1,25 +1,23 @@
 const { DataTypes } = require('sequelize');
 const db = require('../db/conection');
 
-const Usuario = db.define('usuario', {
-  id_user: {
+const Archivo = db.define('archivo', {
+  fileId: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
     allowNull: false,
   },
-  user_name: {
-    type: DataTypes.STRING
+  fileName: {
+    type: DataTypes.STRING,
+    allowNull: false,
   },
-  email: {
-    type: DataTypes.STRING
+  fileUrl: {
+    type: DataTypes.STRING,
+    allowNull: false,
   },
-  password: {
-    type: DataTypes.STRING
-  }
-
 });
-  
+
 module.exports = {
-  Usuario
-};
+  Archivo
+}
